@@ -4,10 +4,12 @@
 
 easyblock = 'Binary'
 
-local_version_tag = 'master'
+# Numbered OpenFOAM.org versions hotfixed usually w/o any tagging 
+local_version_tag = "master" # replace to a tag, e.g. "version-12", "20250206", etc.
 
-name          = 'OpenFOAM'
-version       = 'dev'
+name    = 'OpenFOAM'
+version = 'dev'
+versionsuffix = '-ParaView'
 
 homepage = 'http://www.openfoam.org/'
 
@@ -34,11 +36,13 @@ Allrun scripts require some additional tweaking.
 
 toolchain = {'name': 'cpeGNU', 'version': '24.03'}
 
-sources = [{
-    'source_urls': ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive'],
-    'filename': f'%(version_major)s_{local_version_tag}.tar.gz',
-    'download_filename': f'{local_version_tag}.tar.gz',
-}]
+sources = [
+    {
+        "source_urls": ["https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive"],
+        "filename": f"%(version_major)s_{local_version_tag}.tar.gz",
+        "download_filename": f"{local_version_tag}.tar.gz",
+    }
+]
 patches = [
     ('wmake-rules-linux64Cray-gcc13.patch', 0),
 ]
@@ -52,17 +56,29 @@ dependencies = [
     ('SCOTCH',    '7.0.4'),
     ('METIS',     '5.1.0'),
     ('Zoltan',    '3.901'), # depends on ParMETIS
+    ('ParaView',  '6.0.1'),
 ]
 
-unpack_options = '--strip-components=1'
-extract_sources = True
+unpack_options    = '--strip-components=1'
+extract_sources   = True
 buildininstalldir = True
 
-local_project_name = '%(version_major)s-%(toolchain_name)s-%(toolchain_version)s'
+local_project_name = '%(version_major)s-%(toolchain_name)s-%(toolchain_version)s%(versionsuffix)s'
 
-install_cmd = ' && '.join([
-    './bin/tools/foamConfigurePaths --projectName %s --dependency PARMETIS=OpenFOAM --dependency ParaView=none' % (local_project_name),
-    'printf "export PARMETIS_ARCH_PATH=$EBROOTPARMETIS\nexport PARMETIS_VERSION=parmetis-${EBVERSIONPARMETIS}\n" > ./etc/config.sh/parMetis',
+local_cmake_args = ' '.join([
+  '-DHDF5_ROOT=${HDF5_ROOT}',
+  '-DHDF5_PREFER_PARALLEL=ON',
+  '-DHDF5_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_parallel.so;${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+  '-DHDF5_C_LIBRARY="${HDF5_ROOT}/lib/libhdf5_parallel.so"',
+  '-DHDF5_HL_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+  '-DHDF5_C_HL_LIBRARY="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+])
+
+install_cmd  = ' && '.join([
+    './bin/tools/foamConfigurePaths --projectName %s --dependency PARMETIS=OpenFOAM --dependency ParaView=paraviewopenfoam:${EBVERSIONPARAVIEW}' % (local_project_name),
+    'printf "export PARMETIS_ARCH_PATH=${EBROOTPARMETIS}\nexport PARMETIS_VERSION=parmetis-${EBVERSIONPARMETIS}\n" > ./etc/config.sh/parMetis',
+    'sed -i "s|paraviewDir=/opt/paraviewopenfoam.*|paraviewDir=${EBROOTPARAVIEW}|" ./etc/config.sh/paraview',
+    'sed -i \'s|cmake ../..|CMAKE_PREFIX_PATH="${NETCDF_DIR}:${CMAKE_PREFIX_PATH}" &|g;s|cmake ../..|& %s|\' ./applications/utilities/postProcessing/graphics/PVReaders/Allwmake' % (local_cmake_args),
     'sed -i \'125i    *cpeGNU*) version=%(version_major)s ;;\' ./bin/foamEtcFile',
     'source ./etc/bashrc WM_COMPILER=Cray WM_CC=cc WM_CXX=CC WM_MPLIB=CRAY-MPICH MPICH_DIR=${CRAY_MPICH_PREFIX}',
     './Allwmake -j%(parallel)s',
