@@ -1,13 +1,15 @@
 # Version 10, based on instructions from Esko Järvinen, CSC
 # Updated to version 10 by Orian Louant
 # Updated to version 12 by Stanislau Stasheuski
+#DOC Release version of OpenFOAM 13 with paraFoam, without further patches.
 
 easyblock = 'Binary'
 
+# Numbered OpenFOAM.org versions hotfixed usually w/o any tagging 
 local_version_tag = 'master' # replace to a tag ('version-12', '20250903', etc.) or commit hash ('e268567', etc.)
 
 name    = 'OpenFOAM'
-version = 'dev'
+version = '13'
 versionsuffix = '-ParaView'
 
 homepage = 'http://www.openfoam.org/'
@@ -35,13 +37,13 @@ Allrun scripts require some additional tweaking.
 
 toolchain = {'name': 'cpeGNU', 'version': '24.03'}
 
-sources = [
+# https://github.com/OpenFOAM/OpenFOAM-13/archive/version-13.tar.gz
+source_urls = ['https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive']
+sources     = [
     {
-        "source_urls": ["https://github.com/OpenFOAM/OpenFOAM-%(version_major)s/archive"],
-        "filename": f"%(version_major)s_{local_version_tag}.tar.gz",
-        "download_filename": f"{local_version_tag}.tar.gz",
-    }
-]
+        "download_filename": f'{local_version_tag}.tar.gz',
+        "filename":          f'%(version_major)s_{local_version_tag}.tar.gz',
+    }]
 patches = [
     ('wmake-rules-linux64Cray-gcc13.patch', 0),
 ]
