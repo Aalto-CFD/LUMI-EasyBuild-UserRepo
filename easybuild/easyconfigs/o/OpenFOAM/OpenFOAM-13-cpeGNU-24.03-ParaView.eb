@@ -67,12 +67,12 @@ buildininstalldir = True
 local_project_name = '%(version_major)s-%(toolchain_name)s-%(toolchain_version)s%(versionsuffix)s'
 
 local_cmake_args = ' '.join([
-  '-DHDF5_ROOT=${HDF5_ROOT}',
-  '-DHDF5_PREFER_PARALLEL=ON',
-  '-DHDF5_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_parallel.so;${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
-  '-DHDF5_C_LIBRARY="${HDF5_ROOT}/lib/libhdf5_parallel.so"',
-  '-DHDF5_HL_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
-  '-DHDF5_C_HL_LIBRARY="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+    '-DHDF5_ROOT=${HDF5_ROOT}',
+    '-DHDF5_PREFER_PARALLEL=ON',
+    '-DHDF5_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_parallel.so;${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+    '-DHDF5_C_LIBRARY="${HDF5_ROOT}/lib/libhdf5_parallel.so"',
+    '-DHDF5_HL_LIBRARIES="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
+    '-DHDF5_C_HL_LIBRARY="${HDF5_ROOT}/lib/libhdf5_hl_parallel.so"',
 ])
 
 install_cmd  = ' && '.join([
