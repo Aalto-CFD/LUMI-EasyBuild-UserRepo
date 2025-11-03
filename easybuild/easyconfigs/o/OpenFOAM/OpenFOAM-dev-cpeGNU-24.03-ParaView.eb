@@ -79,9 +79,9 @@ install_cmd = ' && '.join([
     'sed -i "s|paraviewDir=/opt/paraviewopenfoam.*|paraviewDir=${EBROOTPARAVIEW}|" ./etc/config.sh/paraview',
     'sed -i \'s|cmake ../..|CMAKE_PREFIX_PATH="${NETCDF_DIR}:${CMAKE_PREFIX_PATH}" &|g;s|cmake ../..|& %s|\' ./applications/utilities/postProcessing/graphics/PVReaders/Allwmake' % (local_cmake_args),
     'sed -i \'125i    *cpeGNU*) version=%(version_major)s ;;\' ./bin/foamEtcFile',
-    'sed -i "s|WM_COMPILE_OPTION=.*|WM_COMPILE_OPTION=Debug|g" ./etc/bashrc',
-    'source ./etc/bashrc WM_COMPILER=Cray WM_CC=cc WM_CXX=CC WM_MPLIB=CRAY-MPICH MPICH_DIR=${CRAY_MPICH_PREFIX}',
-    './Allwmake -j%(parallel)s',
+    # 'sed -i "s|WM_COMPILE_OPTION=.*|WM_COMPILE_OPTION=Debug|g" ./etc/bashrc',
+    # 'source ./etc/bashrc WM_COMPILER=Cray WM_CC=cc WM_CXX=CC WM_MPLIB=CRAY-MPICH MPICH_DIR=${CRAY_MPICH_PREFIX}',
+    # './Allwmake -j%(parallel)s',
     'sed -i "s|WM_COMPILE_OPTION=.*|WM_COMPILE_OPTION=Opt|g" ./etc/bashrc',
     'source ./etc/bashrc WM_COMPILER=Cray WM_CC=cc WM_CXX=CC WM_MPLIB=CRAY-MPICH MPICH_DIR=${CRAY_MPICH_PREFIX}',
     './Allwmake -j%(parallel)s',
@@ -92,8 +92,8 @@ sanity_check_paths = {
     'dirs':  [
         'platforms/linux64CrayDPInt32Opt/bin', 
         'platforms/linux64CrayDPInt32Opt/lib',
-        'platforms/linux64CrayDPInt32Debug/bin',
-        'platforms/linux64CrayDPInt32Debug/lib',
+        # 'platforms/linux64CrayDPInt32Debug/bin',
+        # 'platforms/linux64CrayDPInt32Debug/lib',
     ],
 }
 
